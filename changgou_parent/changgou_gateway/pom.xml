@@ -13,6 +13,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>changgou_gateway_system</module>
+        <module>changgou_gateway_web</module>
     </modules>
 
     <!--网关依赖-->
@@ -43,5 +44,7 @@
             <artifactId>jjwt</artifactId>
             <version>0.9.0</version>
         </dependency>
+
     </dependencies>
+
 </project>
