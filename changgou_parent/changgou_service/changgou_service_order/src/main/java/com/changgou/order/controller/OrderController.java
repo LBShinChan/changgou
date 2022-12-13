@@ -2,9 +2,11 @@ package com.changgou.order.controller;
 import com.changgou.entity.PageResult;
 import com.changgou.entity.Result;
 import com.changgou.entity.StatusCode;
+import com.changgou.order.config.TokenDecode;
 import com.changgou.order.service.OrderService;
 import com.changgou.order.pojo.Order;
 import com.github.pagehelper.Page;
+import org.aspectj.weaver.ast.Or;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
@@ -34,11 +36,13 @@ public class OrderController {
      * @return
      */
     @GetMapping("/{id}")
-    public Result findById(@PathVariable String id){
+    public Result<Order> findById(@PathVariable String id){
         Order order = orderService.findById(id);
         return new Result(true,StatusCode.OK,"查询成功",order);
     }
 
+    @Autowired
+    private TokenDecode tokenDecode;
 
     /***
      * 新增数据
@@ -47,8 +51,10 @@ public class OrderController {
      */
     @PostMapping
     public Result add(@RequestBody Order order){
-        orderService.add(order);
-        return new Result(true,StatusCode.OK,"添加成功");
+        String username = tokenDecode.getUserInfo().get("username");
+        order.setUsername(username);
+        String orderId = orderService.add(order);
+        return new Result(true,StatusCode.OK,"添加成功",orderId);
     }
 
 
@@ -101,6 +107,28 @@ public class OrderController {
         Page<Order> pageList = orderService.findPage(searchMap, page, size);
         PageResult pageResult=new PageResult(pageList.getTotal(),pageList.getResult());
         return new Result(true,StatusCode.OK,"查询成功",pageResult);
+    }
+
+    /**
+     * 批量发货
+     * @param orders  订单列表
+     */
+    @PostMapping("/batchSend")
+    public Result batchSend( @RequestBody List<Order> orders){
+        orderService.batchSend( orders );
+        return new Result( true,StatusCode.OK,"发货成功" );
+    }
+
+    /**
+     * 确认收货
+     * @param orderId  订单号
+     * @param operator 操作者
+     * @return
+     */
+    @PutMapping("/take/{orderId}/operator/{operator}")
+    public Result take(@PathVariable String orderId, @PathVariable String operator){
+        orderService.confirmTask( orderId,operator );
+        return new Result( true,StatusCode.OK,"订单收获成功" );
     }
 
 

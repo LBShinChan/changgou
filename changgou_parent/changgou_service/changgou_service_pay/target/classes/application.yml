@@ -1,0 +1,18 @@
+server:
+  port: 9010
+spring:
+  application:
+    name: pay
+  rabbitmq:
+    host: 192.168.200.128
+  main:
+    allow-bean-definition-overriding: true #当遇到同样名字的时候，是否允许覆盖注册
+eureka:
+  client:
+    service-url:
+      defaultZone: http://127.0.0.1:6868/eureka
+  instance:
+    prefer-ip-address: true
+
+wxpay:
+  notify_url: http://w58474m5.shenzhuo.vip:45095/wxpay/notify

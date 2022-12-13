@@ -2,6 +2,7 @@ package com.changgou.user.controller;
 import com.changgou.entity.PageResult;
 import com.changgou.entity.Result;
 import com.changgou.entity.StatusCode;
+import com.changgou.user.config.TokenDecode;
 import com.changgou.user.service.UserService;
 import com.changgou.user.pojo.User;
 import com.github.pagehelper.Page;
@@ -110,6 +111,24 @@ public class UserController {
     public User findUserInfo(@PathVariable("username") String username){
         User user = userService.findById(username);
         return user;
+    }
+
+    @Autowired
+    private TokenDecode tokenDecode;
+
+    /***
+     * 增加用户积分
+     * @param points:要添加的积分
+     */
+    @GetMapping(value = "/points/add")
+    public Result addPoints(Integer points){
+        //获取用户名
+        Map<String, String> userMap = tokenDecode.getUserInfo();
+        String username = userMap.get("username");
+
+        //添加积分
+        userService.addUserPoints(username,points);
+        return new Result(true,StatusCode.OK,"添加积分成功！");
     }
 
 }

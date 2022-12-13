@@ -25,7 +25,7 @@ public interface OrderService {
      * 新增
      * @param order
      */
-    void add(Order order);
+    String add(Order order);
 
     /***
      * 修改
@@ -64,6 +64,23 @@ public interface OrderService {
     Page<Order> findPage(Map<String, Object> searchMap, int page, int size);
 
 
+    void updatePayStatus(String orderId, String transactionId);
 
+    void closeOrder(String orderId);
+
+    /**
+     * 批量发货
+     * @param orders
+     */
+    void batchSend(List<Order> orders);
+
+    /**
+     * 确认收货
+     * @param orderId
+     * @param operator
+     */
+    void confirmTask(String orderId,String operator);
+
+    void autoTack();
 
 }
